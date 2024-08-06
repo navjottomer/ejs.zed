@@ -1,0 +1,15 @@
+id = "ejs"
+name = "EJS"
+description = "EJS (Embedded JavaScript) language support"
+version = "0.0.1"
+schema_version = 1
+authors = ["Navjot Tomer <navjottomer@gmail.com>"]
+repository = "https://github.com/navjottomer/zed-ejs"
+
+[grammars.embedded_template]
+repository = "https://github.com/tree-sitter/tree-sitter-embedded-template"
+commit = "38d5004a797298dc42c85e7706c5ceac46a3f29f"
+
+[language_servers.typescript-language-server]
+name = "TypeScript Language Server"
+language = "ejs"

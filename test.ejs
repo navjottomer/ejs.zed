@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %></title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><%= headerText %></h1>
+    </header>
+
+    <nav>
+        <% if (user && user.isLoggedIn) { %>
+            <ul>
+                <li><a href="/home">Home</a></li>
+                <li><a href="/profile">Profile</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        <% } else { %>
+            <ul>
+                <li><a href="/login">Login</a></li>
+                <li><a href="/register">Register</a></li>
+            </ul>
+        <% } %>
+    </nav>
+
+    <main>
+        <section>
+            <h2>Welcome to our site!</h2>
+            <p>Here's some dynamic content:</p>
+
+            <%# This is a single-line comment %>
+
+            <%#
+                This is a multi-line comment
+                It should be foldable
+                And properly highlighted
+            %>
+
+            <ul>
+                <% for (let i = 0; i < items.length; i++) { %>
+                    <li><%= items[i].name %> - $<%= items[i].price.toFixed(2) %></li>
+                <% } %>
+            </ul>
+
+            <%- include('partials/special-offer', { offer: currentOffer }) %>
+
+            <% if (showDebug) { %>
+                <div class="debug-info">
+                    <%_ for (let key in debugInfo) { _%>
+                        <p><strong><%= key %>:</strong> <%= debugInfo[key] %></p>
+                    <%_ } _%>
+                </div>
+            <% } %>
+
+            <%~ `This is a raw output: ${rawHtmlContent}` %>
+
+            <%
+                let complexCalculation = function(x, y) {
+                    return x * y + Math.sqrt(x + y);
+                };
+            %>
+
+            <p>Result of complex calculation: <%= complexCalculation(5, 7) %></p>
+
+            <%- '<script>alert("This is injected JS");</script>' %>
+
+            <%# Testing GraphQL directive %>
+            <%graphql
+                query UserInfo($id: ID!) {
+                    user(id: $id) {
+                        name
+                        email
+                        posts {
+                            title
+                            content
+                        }
+                    }
+                }
+            %>
+
+            <% const condition = true; %>
+            <%= condition ? 'True condition' : 'False condition' %>
+
+            <%
+                // Testing nested structures
+                if (user.permissions.includes('admin')) {
+            %>
+                <div class="admin-panel">
+                    <h3>Admin Functions</h3>
+                    <ul>
+                        <% adminFunctions.forEach(function(func) { %>
+                            <li><a href="<%= func.url %>"><%= func.name %></a></li>
+                        <% }); %>
+                    </ul>
+                </div>
+            <% } %>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; <%= new Date().getFullYear() %> Our Company</p>
+    </footer>
+
+    <script>
+        // Some client-side JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded!');
+        });
+    </script>
+</body>
+</html>
