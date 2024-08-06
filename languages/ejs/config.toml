@@ -1,6 +1,18 @@
 name = "EJS"
 grammar = "embedded_template"
 path_suffixes = ["ejs"]
-line_comment = "<%#"
-autoclose_before = ";:.,=}])>"
-word_characters = ["-"]
+line_comments = ["<%# ", "<!-- "]
+scope_to_injection_language = true
+injection_language = "javascript"
+
+brackets = [
+    { start = "<%", end = "%>", close = true, newline = true },
+    { start = "<%=", end = "%>", close = true, newline = false },
+    { start = "<%-", end = "%>", close = true, newline = false },
+    { start = "<%#", end = "%>", close = true, newline = true },
+    { start = "(", end = ")", close = true, newline = false },
+    { start = "[", end = "]", close = true, newline = false },
+    { start = "{", end = "}", close = true, newline = true },
+    { start = "\"", end = "\"", close = true, newline = false, not_in = ["string", "comment"] },
+    { start = "'", end = "'", close = true, newline = false, not_in = ["string", "comment"] },
+]
