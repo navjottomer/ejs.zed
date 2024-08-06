@@ -89,6 +89,7 @@
             <%= condition ? 'True condition' : 'False condition' %>
 
             <%
+                let template = `<h3>Template string ${condition ? 'True' : 'False'}</h3>`;
                 // Testing nested structures
                 if (user.permissions.includes('admin')) {
             %>

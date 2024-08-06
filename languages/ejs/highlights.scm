@@ -4,13 +4,13 @@
     "<%"
     "<%_"
     "<%|"
-  ] @punctuation.special
-  (code)? @embedded
+  ] @tag.delimiter
+  (code)? @embedded.javascript
   [
     "%>"
     "-%>"
     "_%>"
-  ] @punctuation.special
+  ] @tag.delimiter
 )
 
 ; Output directives
@@ -21,13 +21,13 @@
     "<%|="
     "<%|=="
     "<%-"
-  ] @punctuation.special
-  (code)? @embedded
+  ] @tag.delimiter
+  (code)? @embedded.javascript
   [
     "%>"
     "-%>"
     "=%>"
-  ] @punctuation.special
+  ] @tag.delimiter
 )
 
 ; Comment directive
@@ -39,13 +39,13 @@
 
 ; GraphQL directive
 (graphql_directive
-  "<%graphql" @punctuation.special
-  (code)? @embedded
-  "%>" @punctuation.special
+  "<%graphql" @tag.delimiter
+  (code)? @embedded.graphql
+  "%>" @tag.delimiter
 )
 
 ; Content (HTML)
 (content) @text.html
 
 ; Code
-(code) @embedded
+(code) @embedded.javascript
