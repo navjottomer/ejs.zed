@@ -4,7 +4,6 @@
     "<%"
     "<%_"
     "<%|"
-    "<%~"
   ] @punctuation.special
   (code)? @embedded
   [

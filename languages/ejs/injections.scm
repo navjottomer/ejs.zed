@@ -1,17 +1,9 @@
-((content) @injection.content
- (#set! injection.language "html")
+((content) @content
+ (#set! "language" "html")
  (#set! "combined"))
 
-((code) @injection.content
- (#set! injection.language "javascript")
+((code) @content
+ (#set! "language" "javascript")
  (#set! "combined"))
-
-((directive
-  (code) @injection.content)
- (#set! injection.language "javascript"))
-
-((output_directive
-  (code) @injection.content)
- (#set! injection.language "javascript"))
 
 ((comment_directive) @comment)
