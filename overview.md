@@ -14,7 +14,6 @@ This extension adds support for EJS (Embedded JavaScript) templates to the Zed e
     └── ejs
         languages/ejs/indents.scm
         languages/ejs/highlights.scm
-        languages/ejs/folds.scm
         languages/ejs/config.toml
         languages/ejs/injections.scm
         languages/ejs/brackets.scm
@@ -41,7 +40,49 @@ commit = "38d5004a797298dc42c85e7706c5ceac46a3f29f"
 ### languages/ejs/brackets.scm
 
 ```scheme
-```
+; Directive brackets
+(directive
+  "<%"  @open
+  "%>"  @close)
+
+(directive
+  "<%_" @open
+  "_%>" @close)
+
+(directive
+  "<%|" @open
+  "%>"  @close)
+
+; Output directive brackets
+(output_directive
+  "<%="  @open
+  "%>"   @close)
+
+(output_directive
+  "<%==" @open
+  "%>"   @close)
+
+(output_directive
+  "<%|=" @open
+  "%>"   @close)
+
+(output_directive
+  "<%|==" @open
+  "%>"    @close)
+
+(output_directive
+  "<%-"  @open
+  "%>"   @close)
+
+; Comment directive brackets
+(comment_directive
+  "<%#" @open
+  "%>"  @close)
+
+; GraphQL directive brackets
+(graphql_directive
+  "<%graphql" @open
+  "%>"        @close)```
 
 ### languages/ejs/config.toml
 
@@ -49,33 +90,21 @@ commit = "38d5004a797298dc42c85e7706c5ceac46a3f29f"
 name = "EJS"
 grammar = "embedded_template"
 path_suffixes = ["ejs"]
-line_comment = "<%#"
-autoclose_before = ";:.,=}])>"
-word_characters = ["-"]
-```
+line_comments = ["<%# ", "<!-- "]
+scope_to_injection_language = true
+injection_language = "javascript"
 
-### languages/ejs/folds.scm
-
-```scheme
-; Fold directives
-(directive) @fold
-(output_directive) @fold
-
-; Fold multi-line comments
-(comment_directive
-  "<%#" @fold.start
-  (comment) @fold.inner
-  "%>" @fold.end) @fold
-
-; Fold single-line comments
-(comment_directive) @fold
-
-(graphql_directive) @fold
-
-; Fold HTML content between EJS tags
-(template 
-  (content) @fold
-  (#match? @fold "^\\s*<[^/][^>]*>"))```
+brackets = [
+    { start = "<%", end = "%>", close = true, newline = true },
+    { start = "<%=", end = "%>", close = true, newline = false },
+    { start = "<%-", end = "%>", close = true, newline = false },
+    { start = "<%#", end = "%>", close = true, newline = true },
+    { start = "(", end = ")", close = true, newline = false },
+    { start = "[", end = "]", close = true, newline = false },
+    { start = "{", end = "}", close = true, newline = true },
+    { start = "\"", end = "\"", close = true, newline = false, not_in = ["string", "comment"] },
+    { start = "'", end = "'", close = true, newline = false, not_in = ["string", "comment"] },
+]```
 
 ### languages/ejs/highlights.scm
 
@@ -86,13 +115,13 @@ word_characters = ["-"]
     "<%"
     "<%_"
     "<%|"
-  ] @punctuation.special
-  (code)? @embedded
+  ] @tag.delimiter
+  (code)? @embedded.javascript
   [
     "%>"
     "-%>"
     "_%>"
-  ] @punctuation.special
+  ] @tag.delimiter
 )
 
 ; Output directives
@@ -103,13 +132,13 @@ word_characters = ["-"]
     "<%|="
     "<%|=="
     "<%-"
-  ] @punctuation.special
-  (code)? @embedded
+  ] @tag.delimiter
+  (code)? @embedded.javascript
   [
     "%>"
     "-%>"
     "=%>"
-  ] @punctuation.special
+  ] @tag.delimiter
 )
 
 ; Comment directive
@@ -121,32 +150,66 @@ word_characters = ["-"]
 
 ; GraphQL directive
 (graphql_directive
-  "<%graphql" @punctuation.special
-  (code)? @embedded
-  "%>" @punctuation.special
+  "<%graphql" @tag.delimiter
+  (code)? @embedded.graphql
+  "%>" @tag.delimiter
 )
 
 ; Content (HTML)
 (content) @text.html
 
 ; Code
-(code) @embedded```
+(code) @embedded.javascript```
 
 ### languages/ejs/indents.scm
 
 ```scheme
-```
+[
+  (directive)
+  (output_directive)
+  (comment_directive)
+  (graphql_directive)
+] @indent
+
+[
+  "%>"
+  "-%>"
+  "_%>"
+  "=%>"
+] @outdent
+
+; HTML-like indentation
+(content) @indent
+
+; Specific HTML tags that should indent their content
+(content) @indent
+(#match? @indent "^\\s*<(div|section|article|main|header|footer|nav)\\b")
+
+; Closing tags for specific HTML elements
+(content) @outdent
+(#match? @outdent "^\\s*</(div|section|article|main|header|footer|nav)>")```
 
 ### languages/ejs/injections.scm
 
 ```scheme
-((content) @content
- (#set! "language" "html")
- (#set! "combined"))
+((directive
+  (code) @content)
+ (#set! language "javascript")
+ (#set! combined))
 
-((code) @content
- (#set! "language" "javascript")
- (#set! "combined"))
+((output_directive
+  (code) @content)
+ (#set! language "javascript")
+ (#set! combined))
+
+((content) @content
+ (#set! language "html")
+ (#set! combined))
+
+((graphql_directive
+  (code) @content)
+ (#set! language "graphql")
+ (#set! combined))
 
 ((comment_directive) @comment)```
 
