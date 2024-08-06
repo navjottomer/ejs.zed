@@ -39,6 +39,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - 0.0.1: Initial release with basic EJS support
 
+![ejs-syntax-higlight](https://github.com/user-attachments/assets/a26abd2d-9cfa-4f07-a706-13dd85cdd321)
+
 ---
 
 For more information on EJS, visit [EJS documentation](https://ejs.co/).
